@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ISQ.NET.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,6 +35,13 @@ namespace ISQ.NET
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            string connString =
+                $"server={Environment.GetEnvironmentVariable("ISQNET_SERVER") ?? "localhost"};database={Environment.GetEnvironmentVariable("ISQNET_DB") ?? "ISQNET"};uid={Environment.GetEnvironmentVariable("ISQNET_USER") ?? "root"};pwd={Environment.GetEnvironmentVariable("ISQNET_PASSWORD") ?? "password"}";
+            
+            services.AddDbContext<ProfessorDbContext>(options => options.UseMySQL(connString));
+            services.AddDbContext<IsqEntryDbContext>(options => options.UseMySQL(connString));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
